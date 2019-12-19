@@ -1,0 +1,39 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: discovery-client
+spec:
+  selector:
+    app: discovery-client
+  ports:
+    - protocol: TCP
+      port: 8081
+      nodePort: 30084
+  type: NodePort
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery-client
+  namespace: default
+spec:
+  selector:
+      matchLabels:
+        app: discovery-client
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: discovery-client
+    spec:
+      containers:
+        - name: discovery-client
+          image: discovery-client:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+          env:
+            - name: env.namespace
+              value: default

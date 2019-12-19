@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minikube-sample
+spec:
+  selector:
+      matchLabels:
+        app: minikube-sample
+
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: minikube-sample
+    spec:
+      containers:
+        - name: minikube-sample
+          image: minikube-sample:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: env.namespace
+              value: default
+          volumeMounts:
+            - name: application-config
+              mountPath: "/custom"
+              subPath: application.properties
+              readOnly: true
+      volumes:
+        - name: application-config
+          configMap:
+            name: minikube-sample
